@@ -1,26 +1,37 @@
-#关闭防火墙，关闭selinux
+# PHP 5.5安装-(PS:php是世界上最好的语言)
 
+## 一、准备工作
 
-#介绍
-从php5.3开始，php-fpm就已经集成到php中了，所以即使你用的nginx服务器，也不需要自己再去安装fastcgi或者php-fpm了
+### 1.为了防止调试的模式各种错误
+```
+关闭防火墙、关闭selinux，重启linxu
+```
 
-#说明
+### 2.其他相关
+```
+1.---从php5.3开始，php-fpm就已经集成到php中了，所以即使你用的nginx服务器，也不需要自己再去安装fastcgi或者php-fpm了
+
+2.---说明
 CGI:一种协议
-
 FastCGI : 基于CGI协议的实现
-
 php-fpm : FastCGI进程管理器
+详情看我：http://www.golaravel.com/post/difference-between-fastcgi-and-php-fpm/
 
 
-#依赖包
+3.---依赖包
 yum install gd-devel libjpeg-devel libpng-devel libxml2-devel bzip2-devel libcurl-devel openldap-devel curl-devel
 
 自己编译时：编译libmcrypt (然后指定到--with-mcrypt=/usr/local/libmcrypt)
 
-#解压
+```
+
+
+## 二、安装
+
+### 1.编译安装
+```
 tar -zxvf php-5.5.18.tar.gz
 cd php-5.5.18
-
 
 #设置配置文件
 ./configure --prefix=/usr/local/php-5.5.18 \
@@ -49,14 +60,17 @@ cd php-5.5.18
 make;
 make test;
 make install;
+```
 
-#验证安装
+### 2.调试php
+```
 cd /usr/local/php-5.5.18/bin
 ./php -v  查看php版本
+```
 
 
-#启动php通讯服务
-
+### 3.启动php-fpm通讯服务
+```
 #复制配置php-fpm文件
 cp -arip /usr/local/php-5.5.18/etc/php-fpm.conf.default /usr/local/php-5.5.18/etc/php-fpm.conf
 
@@ -93,4 +107,6 @@ kill -15 pid
 ln -s /usr/local/php-5.5.18/sbin/php-fpm /usr/local/bin/
 ln -s /usr/local/php-5.5.18/bin/* /usr/local/bin/
 
+
 netstat -tunlp
+```

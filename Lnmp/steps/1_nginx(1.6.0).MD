@@ -1,35 +1,47 @@
+# nginx 安装
+
+## 一、准备工作
+
+### 1.关闭防火墙
+```
 service iptables stop (关闭防火墙)（关闭selinux）
+```
 
-yum -y
-yum install zlib-devel pcre-devel openssl-devel openssl
+### 2.安装一些包
+```
+yum -y install zlib-devel pcre-devel openssl-devel openssl
+```
 
+### 3.创建nginx执行的用户(evans),如果存在忽略
+```
 groupadd -r evans
 useradd -g evans evans
+```
 
-now_nginx=nginx-1.6.0 //设置版本变量
-$now_nginx
 
+## 二、开始安装
+
+### 1.移动nginx源码包到linux指定的用户编译源码目录
+```
 mv nginx-1.6.0.tar.gz /usr/src/
-
 cd /usr/src/
-
 tar -zxvf nginx-1.6.0.tar.gz
-
 cd nginx-1.6.0
+```
 
-#编译
+### 2.编译
+```
 ./configure --prefix=/usr/local/nginx-1.6.0 --with-openssl=/usr/include/openssl --with-pcre --with-http_stub_status_module
-#说明
-./configure
---prefix=/usr/local/nginx-1.6.0  （安装目录）
---with-openssl=/usr/include/openssl
---with-pcre
---with-http_stub_status_module
 
-make  编译
-make install 安装  （安装成功在/usr/local/nginx-1.6.0 目录中）
+make  
+make install
+```
 
-#配置文件
+#### 3.安装目录、已经启动项
+```
+(安装成功在/usr/local/nginx-1.6.0 目录中)
+
+#配置文件目录
 /usr/local/nginx-1.6.0/conf/nginx.conf
 
 #命令
@@ -48,10 +60,14 @@ ln -s /usr/local/nginx-1.6.0/sbin/nginx /usr/local/bin/
 
 #配置文件目录软链
 ln -s /usr/local/nginx-1.6.0/conf/ /etc/nginx-1.6.0/conf/
+```
 
-#配置文件详解
+## 四、配置文件详解
 
-一、基本配置
+```
+vim /usr/local/nginx-1.6.0/conf/nginx.conf
+
+一、修改配置文件
 
 #配置用户和用户组
 user evans evans;
@@ -71,7 +87,6 @@ error_log  logs/error.log  info;
 worker_rlimit_nofile 65535;
 
 
-
 #工作模式与连接数上限
 events {
     #uname -a 工作模式，linux2.6版本以上用epoll
@@ -79,7 +94,6 @@ events {
     #单个进程允许的最大连接数
     worker_connections  65535;
 }
-
 
 
 二、负载均衡和反向代理设置
@@ -260,11 +274,7 @@ http {
     }
   }
 
-
-
 }
-
-
 
 
 #详细说明
@@ -317,3 +327,4 @@ $server_name	|	请求到达的服务器名;
 $server_port	|	请求到达的服务器端口号;
 $server_protocol	|	请求的协议版本，"HTTP/1.0"或"HTTP/1.1";
 $uri	|	请求的URI，可能和最初的值有不同，比如经过重定向之类的。
+```
